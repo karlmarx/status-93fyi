@@ -29,11 +29,30 @@ export default function StatusPage() {
     }
   }, [])
 
-  // Initial fetch + 60s polling
+  // Initial fetch + 60s polling; paused when the tab is hidden.
   useEffect(() => {
-    fetchStatus()
-    const poll = setInterval(fetchStatus, 60_000)
-    return () => clearInterval(poll)
+    let poll: ReturnType<typeof setInterval> | undefined
+
+    const start = () => {
+      if (poll) return
+      fetchStatus()
+      poll = setInterval(fetchStatus, 60_000)
+    }
+    const stop = () => {
+      if (poll) clearInterval(poll)
+      poll = undefined
+    }
+    const onVisibility = () => {
+      if (document.visibilityState === 'visible') start()
+      else stop()
+    }
+
+    start()
+    document.addEventListener('visibilitychange', onVisibility)
+    return () => {
+      stop()
+      document.removeEventListener('visibilitychange', onVisibility)
+    }
   }, [fetchStatus])
 
   // "X seconds ago" ticker — resets when data changes
