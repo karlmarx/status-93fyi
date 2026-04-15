@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import { ServiceRow } from '@/components/ServiceRow'
+import { ServiceRowSkeleton } from '@/components/ServiceRowSkeleton'
 import { OverallBadge } from '@/components/OverallBadge'
 import { IncidentHistory } from '@/components/IncidentHistory'
 import { incidents } from '@/lib/incidents'
@@ -51,9 +52,16 @@ export default function StatusPage() {
           <h1 className="text-2xl font-semibold tracking-tight text-white">
             System Status
           </h1>
-          {data && <OverallBadge services={data.services} />}
-          {loading && (
-            <span className="text-sm text-gray-600">Checking services...</span>
+          {data ? (
+            <OverallBadge services={data.services} />
+          ) : (
+            <span
+              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium bg-white/5 text-gray-500 border border-white/5"
+              aria-live="polite"
+            >
+              <span className="w-2 h-2 rounded-full bg-gray-500" />
+              Checking services…
+            </span>
           )}
         </div>
 
@@ -79,9 +87,13 @@ export default function StatusPage() {
             </p>
           )}
 
-          {data?.services.map((s) => (
-            <ServiceRow key={s.name} service={s} />
-          ))}
+          {!data && loading
+            ? Array.from({ length: 5 }).map((_, i) => (
+                <ServiceRowSkeleton key={i} />
+              ))
+            : data?.services.map((s) => (
+                <ServiceRow key={s.name} service={s} />
+              ))}
         </div>
 
         {/* Incident history */}
