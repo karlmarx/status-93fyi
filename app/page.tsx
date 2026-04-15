@@ -52,17 +52,16 @@ export default function StatusPage() {
           <h1 className="text-2xl font-semibold tracking-tight text-white">
             System Status
           </h1>
-          {data ? (
-            <OverallBadge services={data.services} />
-          ) : (
-            <span
-              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium bg-white/5 text-gray-500 border border-white/5"
-              aria-live="polite"
-            >
-              <span className="w-2 h-2 rounded-full bg-gray-500" />
-              Checking services…
-            </span>
-          )}
+          <div role="status" aria-live="polite" aria-atomic="true">
+            {data ? (
+              <OverallBadge services={data.services} />
+            ) : (
+              <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium bg-white/5 text-gray-500 border border-white/5">
+                <span className="w-2 h-2 rounded-full bg-gray-500" />
+                Checking services…
+              </span>
+            )}
+          </div>
         </div>
 
         {/* Services table */}
