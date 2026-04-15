@@ -68,6 +68,12 @@ export default function StatusPage() {
 
         {/* Header */}
         <div className="mb-10 space-y-4">
+          <a
+            href="https://93.fyi"
+            className="inline-block text-xs font-mono text-gray-500 hover:text-gray-300 transition-colors"
+          >
+            ← 93.fyi
+          </a>
           <h1 className="text-2xl font-semibold tracking-tight text-white">
             System Status
           </h1>
