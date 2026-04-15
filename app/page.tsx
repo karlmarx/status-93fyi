@@ -74,7 +74,7 @@ export default function StatusPage() {
               Services
             </span>
             {data && (
-              <span className="text-xs text-gray-700 font-mono tabular-nums">
+              <span className="text-xs text-gray-500 font-mono tabular-nums">
                 Updated {secondsAgo}s ago
               </span>
             )}
@@ -99,7 +99,7 @@ export default function StatusPage() {
         <IncidentHistory incidents={incidents} />
 
         {/* Footer */}
-        <footer className="mt-16 text-center text-xs text-gray-700 font-mono">
+        <footer className="mt-16 text-center text-xs text-gray-500 font-mono">
           93.fyi ecosystem
         </footer>
       </div>
