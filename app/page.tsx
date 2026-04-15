@@ -16,7 +16,7 @@ export default function StatusPage() {
 
   const fetchStatus = useCallback(async () => {
     try {
-      const res = await fetch('/api/status')
+      const res = await fetch('/api/status', { cache: 'no-store' })
       if (!res.ok) throw new Error('non-ok response')
       const json: StatusResponse = await res.json()
       setData(json)
