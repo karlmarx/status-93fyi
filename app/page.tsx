@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import { ServiceRow } from '@/components/ServiceRow'
+import { ServiceRowSkeleton } from '@/components/ServiceRowSkeleton'
 import { OverallBadge } from '@/components/OverallBadge'
 import { IncidentHistory } from '@/components/IncidentHistory'
 import { incidents } from '@/lib/incidents'
@@ -15,7 +16,7 @@ export default function StatusPage() {
 
   const fetchStatus = useCallback(async () => {
     try {
-      const res = await fetch('/api/status')
+      const res = await fetch('/api/status', { cache: 'no-store' })
       if (!res.ok) throw new Error('non-ok response')
       const json: StatusResponse = await res.json()
       setData(json)
@@ -28,11 +29,30 @@ export default function StatusPage() {
     }
   }, [])
 
-  // Initial fetch + 60s polling
+  // Initial fetch + 60s polling; paused when the tab is hidden.
   useEffect(() => {
-    fetchStatus()
-    const poll = setInterval(fetchStatus, 60_000)
-    return () => clearInterval(poll)
+    let poll: ReturnType<typeof setInterval> | undefined
+
+    const start = () => {
+      if (poll) return
+      fetchStatus()
+      poll = setInterval(fetchStatus, 60_000)
+    }
+    const stop = () => {
+      if (poll) clearInterval(poll)
+      poll = undefined
+    }
+    const onVisibility = () => {
+      if (document.visibilityState === 'visible') start()
+      else stop()
+    }
+
+    start()
+    document.addEventListener('visibilitychange', onVisibility)
+    return () => {
+      stop()
+      document.removeEventListener('visibilitychange', onVisibility)
+    }
   }, [fetchStatus])
 
   // "X seconds ago" ticker — resets when data changes
@@ -48,13 +68,25 @@ export default function StatusPage() {
 
         {/* Header */}
         <div className="mb-10 space-y-4">
+          <a
+            href="https://93.fyi"
+            className="inline-block text-xs font-mono text-gray-500 hover:text-gray-300 transition-colors"
+          >
+            ← 93.fyi
+          </a>
           <h1 className="text-2xl font-semibold tracking-tight text-white">
             System Status
           </h1>
-          {data && <OverallBadge services={data.services} />}
-          {loading && (
-            <span className="text-sm text-gray-600">Checking services...</span>
-          )}
+          <div role="status" aria-live="polite" aria-atomic="true">
+            {data ? (
+              <OverallBadge services={data.services} />
+            ) : (
+              <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium bg-white/5 text-gray-500 border border-white/5">
+                <span className="w-2 h-2 rounded-full bg-gray-500" />
+                Checking services…
+              </span>
+            )}
+          </div>
         </div>
 
         {/* Services table */}
@@ -67,7 +99,7 @@ export default function StatusPage() {
               Services
             </span>
             {data && (
-              <span className="text-xs text-gray-700 font-mono tabular-nums">
+              <span className="text-xs text-gray-500 font-mono tabular-nums">
                 Updated {secondsAgo}s ago
               </span>
             )}
@@ -79,16 +111,20 @@ export default function StatusPage() {
             </p>
           )}
 
-          {data?.services.map((s) => (
-            <ServiceRow key={s.name} service={s} />
-          ))}
+          {!data && loading
+            ? Array.from({ length: 5 }).map((_, i) => (
+                <ServiceRowSkeleton key={i} />
+              ))
+            : data?.services.map((s) => (
+                <ServiceRow key={s.name} service={s} />
+              ))}
         </div>
 
         {/* Incident history */}
         <IncidentHistory incidents={incidents} />
 
         {/* Footer */}
-        <footer className="mt-16 text-center text-xs text-gray-700 font-mono">
+        <footer className="mt-16 text-center text-xs text-gray-500 font-mono">
           93.fyi ecosystem
         </footer>
       </div>

@@ -13,7 +13,7 @@ export function IncidentHistory({ incidents }: { incidents: Incident[] }) {
         Incident History
       </h2>
       {incidents.length === 0 ? (
-        <p className="text-sm text-gray-600 py-2">No incidents reported.</p>
+        <p className="text-sm text-gray-400 py-2">No incidents reported.</p>
       ) : (
         <div className="space-y-3">
           {incidents.map((incident, i) => (
@@ -26,7 +26,7 @@ export function IncidentHistory({ incidents }: { incidents: Incident[] }) {
                 <span className={`text-xs font-semibold uppercase ${STATUS_COLOR[incident.status]}`}>
                   {incident.status}
                 </span>
-                <span className="text-xs text-gray-600">{incident.date}</span>
+                <span className="text-xs text-gray-400">{incident.date}</span>
               </div>
               <h3 className="text-sm font-medium text-gray-200">{incident.title}</h3>
               <p className="text-xs text-gray-400 mt-1">{incident.description}</p>

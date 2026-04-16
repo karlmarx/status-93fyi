@@ -14,3 +14,9 @@
 .animate-pulse-green {
   animation: pulse-green 2s ease-in-out infinite;
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-pulse-green {
+    animation: none;
+  }
+}

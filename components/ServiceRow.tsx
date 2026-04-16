@@ -34,7 +34,7 @@ export function ServiceRow({ service }: { service: ServiceStatus }) {
       <div className="flex items-center gap-5 font-mono text-xs">
         <span style={{ color }}>{label}</span>
         <span className="text-gray-400">{service.latencyMs}ms</span>
-        <span className="hidden sm:block text-gray-600">{time}</span>
+        <span className="hidden sm:block text-gray-400">{time}</span>
       </div>
     </div>
   )
